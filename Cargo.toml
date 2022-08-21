@@ -1,0 +1,17 @@
+[package]
+name = "open-directory-alfred-workflow"
+version = "0.1.0"
+authors = ["Joscha"]
+edition = "2018"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1.0.56"
+log = { version = "0.4.17", features = ["std"] }
+powerpack = { version = "0.4.1", features = ["detach"] }
+json = "0.12.4"
+fuzzy-matcher = "0.3.7"
+itertools = "0.10.2"
+walkdir = "2"
+clap = "3.2.17"

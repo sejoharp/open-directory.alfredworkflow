@@ -3,16 +3,29 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>sejoharp.open-directory</string>
+	<string>me.chenzz.alfred.idea</string>
 	<key>category</key>
-	<string>Productivity</string>
+	<string>Original</string>
 	<key>connections</key>
 	<dict>
-		<key>6D932454-F130-4AC9-B3E1-53BEE5578D22</key>
+		<key>AEA14D68-E8BD-45C5-8DD9-1DD2614D8BAB</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>D23842F2-2271-4DAE-AC91-FD8FFA716ADB</string>
+				<string>B88BF99B-81C1-432D-B698-D83FDD92C71D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B88BF99B-81C1-432D-B698-D83FDD92C71D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2C383A38-41C5-42C9-A415-F7B5D430BD38</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -25,31 +38,66 @@
 	<key>createdby</key>
 	<string>sejoharp</string>
 	<key>description</key>
-	<string>Search for bookmarks</string>
+	<string>Search and find project</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>bookmarks</string>
+	<string>open-directory</string>
 	<key>objects</key>
 	<array>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>browser</key>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/usr/bin/env bash
+./open-directory-alfred-workflow open --path {query}
+</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
 				<string></string>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string>{query}</string>
-				<key>utf8</key>
-				<true/>
+				<key>type</key>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
+			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>D23842F2-2271-4DAE-AC91-FD8FFA716ADB</string>
+			<string>2C383A38-41C5-42C9-A415-F7B5D430BD38</string>
 			<key>version</key>
-			<integer>1</integer>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>3</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>34</integer>
+				<key>hotmod</key>
+				<integer>1179648</integer>
+				<key>hotstring</key>
+				<string>I</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>uid</key>
+			<string>AEA14D68-E8BD-45C5-8DD9-1DD2614D8BAB</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -59,75 +107,86 @@
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttreatemptyqueryasnil</key>
-				<true/>
+				<false/>
 				<key>argumenttrimmode</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
-				<integer>0</integer>
+				<integer>102</integer>
 				<key>keyword</key>
-				<string>b</string>
+				<string>r</string>
 				<key>queuedelaycustom</key>
 				<integer>1</integer>
 				<key>queuedelayimmediatelyinitially</key>
 				<true/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>queuemode</key>
 				<integer>2</integer>
 				<key>runningsubtext</key>
-				<string>Loading...</string>
-				<key>script</key>
 				<string></string>
+				<key>script</key>
+				<string>#!/usr/bin/env bash
+./open-directory-alfred-workflow search --pattern '{query}'
+</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
-				<string>open-directory-alfred-workflow</string>
+				<string></string>
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string>Search for repos</string>
+				<string>Find/Open project</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>6D932454-F130-4AC9-B3E1-53BEE5578D22</string>
+			<string>B88BF99B-81C1-432D-B698-D83FDD92C71D</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
 	</array>
+	<key>readme</key>
+	<string></string>
 	<key>uidata</key>
 	<dict>
-		<key>6D932454-F130-4AC9-B3E1-53BEE5578D22</key>
+		<key>2C383A38-41C5-42C9-A415-F7B5D430BD38</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<integer>560</integer>
 			<key>ypos</key>
-			<integer>50</integer>
+			<integer>165</integer>
 		</dict>
-		<key>D23842F2-2271-4DAE-AC91-FD8FFA716ADB</key>
+		<key>AEA14D68-E8BD-45C5-8DD9-1DD2614D8BAB</key>
 		<dict>
 			<key>xpos</key>
-			<integer>225</integer>
+			<integer>150</integer>
 			<key>ypos</key>
-			<integer>50</integer>
+			<integer>165</integer>
+		</dict>
+		<key>B88BF99B-81C1-432D-B698-D83FDD92C71D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>330</integer>
+			<key>ypos</key>
+			<integer>165</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
-		<key>BOOKMARKS_FILE</key>
-		<string></string>
-		<key>DEFAULT_SEARCH_URL</key>
-		<string></string>
+		<key>DIRECTORY_PATH</key>
+		<string>~/IdeaProjects</string>
+		<key>BINARY_TO_EXECUTE</key>
+		<string>/Users/myuser/bin/idea</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>1.1.3</string>
-	<key>webaddress</key>
-	<string>https://github.com/sejoharp/boomarks.alfredworkflow</string>
+	<string>1.0.0</string>
 </dict>
 </plist>

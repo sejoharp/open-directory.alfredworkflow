@@ -33,9 +33,9 @@ impl Directory {
         }
     }
 
-    pub fn to_item(&self) -> Item {
+    pub fn to_item(&self, binary_to_execute: String) -> Item {
         Item::new(self.name.to_string())
-            .subtitle("Open →")
+            .subtitle(format!("execute → {} {}", binary_to_execute, self.path.to_owned()))
             .arg(self.path.to_owned())
     }
 
@@ -50,21 +50,25 @@ impl Directory {
 }
 
 
-fn sort_and_filter_matching_bookmarks(bookmarks: Vec<Directory>, query: String) -> Vec<Directory> {
-    return bookmarks
+fn sort_and_filter_matching_directories(directories: Vec<Directory>, query: String) -> Vec<Directory> {
+    return directories
         .iter()
-        .sorted_by_key(|bookmark| bookmark.calculate_matching_score(query.to_owned()))
-        .filter(|bookmark| bookmark.calculate_matching_score(query.to_owned()) < 0)
-        .map(|bookmark| bookmark.to_owned())
+        .sorted_by_key(|directory| directory.calculate_matching_score(query.to_owned()))
+        .filter(|directory| directory.calculate_matching_score(query.to_owned()) < 0)
+        .map(|directory| directory.to_owned())
         .collect();
 }
 
-fn to_items(directories: Vec<Directory>, query: String) -> Vec<Item> {
-    let matched_bookmarks: Vec<Item> = sort_and_filter_matching_bookmarks(directories, query.clone())
+fn to_items(directories: Vec<Directory>, query: String, binary_to_execute: String) -> Vec<Item> {
+    let matched_directories: Vec<Item> = sort_and_filter_matching_directories(directories, query.clone())
         .iter()
-        .map(|bookmark| bookmark.to_item())
+        .map(|directory| directory.to_item(binary_to_execute.to_owned()))
         .collect();
-    return matched_bookmarks;
+    return if matched_directories.is_empty() {
+        vec![default(query)]
+    } else {
+        matched_directories
+    };
 }
 
 fn read_directories(full_path: String) -> Vec<PathBuf> {
@@ -130,7 +134,8 @@ fn open_directory(arguments: &ArgMatches) -> Result<()> {
 fn search_for_directories(arguments: &ArgMatches) -> Result<()> {
     let directory_path = env::var("DIRECTORY_PATH")
         .expect("DIRECTORY_PATH not set");
-
+    let binary_to_execute = env::var("BINARY_TO_EXECUTE")
+        .expect("BINARY_TO_EXECUTE not set");
     let directory_pathes = read_directories(directory_path);
     let directories: Vec<Directory> = directory_pathes
         .iter()
@@ -139,19 +144,27 @@ fn search_for_directories(arguments: &ArgMatches) -> Result<()> {
 
     let pattern = arguments.get_one::<String>("pattern");
     let items: Vec<Item> = match pattern.map(|pattern| pattern.as_str().trim()) {
-        None | Some("") => vec![],
-        Some(pattern) => to_items(directories, String::from(pattern)),
+        None | Some("") => vec![default(String::from(""))],
+        Some(pattern) => to_items(directories, String::from(pattern), binary_to_execute),
     };
     powerpack::output(items)?;
     Ok(())
 }
 
+fn default(query: String) -> Item {
+    let message = if query.is_empty() {
+        "please add a search pattern".to_string()
+    } else {
+        format!("nothing found for {}, try to reformulate your search", query)
+    };
+    Item::new(message)
+}
 
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
 
-    use crate::{Directory, read_directories, sort_and_filter_matching_bookmarks};
+    use crate::{Directory, read_directories, sort_and_filter_matching_directories};
 
     #[test]
     fn transforms_pathbuf_to_directory() {
@@ -186,62 +199,62 @@ mod tests {
 
     #[test]
     fn does_not_matches_the_query() {
-        let bookmark = Directory {
+        let directory = Directory {
             name: String::from("Dashboard"),
             path: String::from("http://www.test.blub"),
         };
 
-        let score = bookmark.calculate_matching_score("z".to_string());
+        let score = directory.calculate_matching_score("z".to_string());
 
         assert_eq!(score, 0);
     }
 
     #[test]
     fn matches_the_query() {
-        let bookmark = Directory {
+        let directory = Directory {
             name: String::from("Dashboard"),
             path: String::from("http://www.test.blub"),
         };
 
-        let score = bookmark.calculate_matching_score("d".to_string());
+        let score = directory.calculate_matching_score("d".to_string());
 
         assert_eq!(score, -29);
     }
 
 
     #[test]
-    fn sorts_and_keep_matchting_bookmarks() {
-        let bookmark1 = Directory {
-            name: String::from("Dashboard"),
-            path: String::from("http://www.test.blub"),
+    fn sorts_and_keep_matchting_directories() {
+        let directory1 = Directory {
+            name: String::from("dashboard"),
+            path: String::from("/test/dashboard"),
         };
-        let bookmark2 = Directory {
-            name: String::from("Bookmarks"),
-            path: String::from("http://www.bookmarks.blub"),
+        let directory2 = Directory {
+            name: String::from("bookmarks"),
+            path: String::from("/test/boomarks"),
         };
-        let bookmarks = vec![bookmark1.clone(), bookmark2.clone()];
-        let expected_bookmarks = vec![bookmark1.clone(), bookmark2.clone()];
+        let directories = vec![directory1.clone(), directory2.clone()];
+        let expected_directories = vec![directory1.clone(), directory2.clone()];
 
-        let matching_bookmarks = sort_and_filter_matching_bookmarks(bookmarks, "o".to_owned());
+        let matching_directories = sort_and_filter_matching_directories(directories, "o".to_owned());
 
-        assert_eq!(matching_bookmarks, expected_bookmarks);
+        assert_eq!(matching_directories, expected_directories);
     }
 
     #[test]
-    fn removes_not_matchting_bookmarks() {
-        let bookmark1 = Directory {
+    fn removes_not_matchting_directories() {
+        let directory1 = Directory {
             name: String::from("Dashboard"),
             path: String::from("http://www.test.blub"),
         };
-        let bookmark2 = Directory {
+        let directory2 = Directory {
             name: String::from("Bookmarks"),
             path: String::from("http://www.bookmarks.blub"),
         };
-        let bookmarks = vec![bookmark1.clone(), bookmark2.clone()];
-        let expected_bookmarks = vec![bookmark1.clone()];
+        let directories = vec![directory1.clone(), directory2.clone()];
+        let expected_directories = vec![directory1.clone()];
 
-        let matching_bookmarks = sort_and_filter_matching_bookmarks(bookmarks, "d".to_owned());
+        let matching_directories = sort_and_filter_matching_directories(directories, "d".to_owned());
 
-        assert_eq!(matching_bookmarks, expected_bookmarks);
+        assert_eq!(matching_directories, expected_directories);
     }
 }

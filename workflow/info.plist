@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>me.chenzz.alfred.idea</string>
+	<string>open-directory.alfredworkflow</string>
 	<key>category</key>
 	<string>Original</string>
 	<key>connections</key>

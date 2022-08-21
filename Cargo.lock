@@ -145,7 +145,7 @@ checksum = "074864da206b4973b84eb91683020dbefd6a8c3f0f38e054d93954e891935e4e"
 
 [[package]]
 name = "open-directory-alfred-workflow"
-version = "0.1.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "clap",

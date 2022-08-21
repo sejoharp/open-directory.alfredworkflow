@@ -14,13 +14,18 @@ use directory::Directory;
 mod directory;
 
 
-fn read_directories(full_path: String) -> Vec<PathBuf> {
-    let directories_pathes = fs::read_dir(full_path)
-        .expect("unable to read sub DIRECTORY_PATH")
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| is_dir(entry))
-        .map(|directory| directory.path());
-    return directories_pathes.collect::<Vec<PathBuf>>();
+fn read_directories(full_pathes: String) -> Vec<PathBuf> {
+    let mut result: Vec<PathBuf> = vec![];
+    for full_path in split_at_comma(full_pathes) {
+        let mut directories_pathes = fs::read_dir(full_path)
+            .expect("unable to read sub DIRECTORY_PATH")
+            .filter_map(|entry| entry.ok())
+            .filter(|entry| is_dir(entry))
+            .map(|directory| directory.path())
+            .collect::<Vec<PathBuf>>();
+        result.append(&mut directories_pathes)
+    }
+    return result;
 }
 
 fn is_dir(entry: &DirEntry) -> bool {
@@ -74,12 +79,21 @@ fn open_directory(arguments: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+fn split_at_comma(directories: String) -> Vec<String> {
+    directories
+        .split(",")
+        .map(|directory| directory.trim())
+        .map(String::from)
+        .collect()
+}
+
 fn search_for_directories(arguments: &ArgMatches) -> Result<()> {
-    let directory_path = env::var("DIRECTORY_PATH")
+    let directory_pathes = env::var("DIRECTORY_PATH")
         .expect("DIRECTORY_PATH not set");
     let binary_to_execute = env::var("BINARY_TO_EXECUTE")
         .expect("BINARY_TO_EXECUTE not set");
-    let directory_pathes = read_directories(directory_path);
+
+    let directory_pathes = read_directories(directory_pathes);
     let directories: Vec<Directory> = directory_pathes
         .iter()
         .map(Directory::from_pathbuf)
@@ -109,7 +123,7 @@ fn main() -> Result<()> {
 mod tests {
     use std::path::PathBuf;
 
-    use crate::read_directories;
+    use crate::{read_directories, split_at_comma};
 
     #[test]
     fn findes_two_dirs() {
@@ -118,5 +132,26 @@ mod tests {
             PathBuf::from("tests/resources/target_dir/example_dir1"),
             PathBuf::from("tests/resources/target_dir/example_dir2")];
         assert_eq!(expected, directory_pathes);
+    }
+
+    #[test]
+    fn splits_into_two_string() {
+        let expected = vec![
+            "tests/resources/target_dir/example_dir1".to_string(),
+            "tests/resources/target_dir/example_dir2".to_string()];
+
+        let directory_strings = split_at_comma("tests/resources/target_dir/example_dir1, tests/resources/target_dir/example_dir2".to_string());
+
+        assert_eq!(expected, directory_strings)
+    }
+
+    #[test]
+    fn splits_into_one_string() {
+        let expected = vec![
+            "tests/resources/target_dir/example_dir2".to_string()];
+
+        let directory_strings = split_at_comma("tests/resources/target_dir/example_dir2".to_string());
+
+        assert_eq!(expected, directory_strings)
     }
 }

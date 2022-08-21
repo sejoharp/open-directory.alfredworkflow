@@ -10,7 +10,10 @@ Alfred workflow to search for repos and open them.
 2. clone
 3. install in alfred: `make install`
 4. set environment variables according to your setup:
-    1. `DIRECTORY_PATH`: Full path to directory, which you want to search in.
+    1. `DIRECTORY_PATH`:
+       - Full pathes to directories, which you want to search in.
+       - Separator is a comma. e.g. `/home/user/repos,/home/user/private-repos`.
+       - Omit the separator, if you only want to scan one directory.
     2. `BINARY_TO_EXECUTE`: Full path to binary you want to execute with the selected path.
 
 ## Debugging issues
